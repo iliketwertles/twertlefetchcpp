@@ -41,21 +41,20 @@ class SystemInfo {
 
         const int packages() const {
             // getting packages, only works for emerge from gentoo
-            if (std::filesystem::is_directory("/var/db/pkg")) {
-                int count = 0;
-                for (const auto& entry : std::filesystem::directory_iterator("/var/db/pkg")) {
-                    if (std::filesystem::is_directory(entry.path())) {
-                        for (const auto& sub_entry : std::filesystem::directory_iterator(entry.path())) {
-                            if (std::filesystem::is_directory(sub_entry.path())) {
-                                count++;
-                            }
+            if (!std::filesystem::is_directory("/var/db/pkg")) {
+                return 0;
+            }
+            int count = 0;
+            for (const auto& entry : std::filesystem::directory_iterator("/var/db/pkg")) {
+                if (std::filesystem::is_directory(entry.path())) {
+                    for (const auto& sub_entry : std::filesystem::directory_iterator(entry.path())) {
+                        if (std::filesystem::is_directory(sub_entry.path())) {
+                            count++;
                         }
                     }
                 }
-                return count;
-            } else {
-                return 0;
             }
+            return count;
         }
 
         const char * desktop() const {
@@ -69,14 +68,13 @@ class SystemInfo {
         }
 
         const int DoB() const {
-            const time_t today = std::time(0);
-            time_t birth_date;
+            const time_t& today = std::time(0);
             if ( stat("/", &fileInfo) == 0 ) {
-                birth_date = fileInfo.st_ctime;
+                const time_t& birth_date = fileInfo.st_ctime;
+                return std::difftime(today, birth_date) / (60 * 60 * 24);
             } else {
-                birth_date = 0;
+                return 999;
             }
-            return std::difftime(today, birth_date) / (60 * 60 * 24);
         }
 };
 
