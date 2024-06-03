@@ -1,11 +1,19 @@
+#include "extra.cpp"
+#include <array>
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <memory>
+#include <sstream>
+#include <stdexcept>
+#include <stdio.h>
 #include <string>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+#include <vector>
 
 struct stat fileInfo;
 
