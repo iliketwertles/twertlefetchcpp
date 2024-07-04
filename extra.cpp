@@ -118,7 +118,7 @@ public:
 };
 
 void fumo(std::string distro, std::string kernel, int packages,
-          std::string desktop, double diff) {
+          std::string desktop) {
 
   printf("⠀⢀⣒⠒⠆⠤⣀⡀⠀\n");
   printf("⢠⡛⠛⠻⣷⣶⣦⣬⣕⡒⠤⢀⣀⠀\n");
@@ -164,6 +164,5 @@ void fumo(std::string distro, std::string kernel, int packages,
   printf("⠀⠀⠀⠀⠀⠀⠀⢠⣎⡀⢀⣾⠇⢀⣠⡶⢶⠞⠋⠉⠉⠒⢄⡀⠉⠈⠉⠀⠀⠀⣠⣾⠀⠀⠀⠀⠀⢸⡀\n");
   printf("⠀⠀⠀⠀⠀⠀⠀⠘⣦⡀⠘⢁⡴⢟⣯⣞⢉⠀⠀⠀⠀⠀⠀⢹⠶⠤⠤⡤⢖⣿⡋⢇⠀⠀⠀⠀⠀⢸⠀\n");
   printf("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠵⠗⠺⠟⠖⢈⡣⡄⠀⠀⠀⠀⢀⣼⡤⣬⣽⠾⠋⠉⠑⠺⠧⣀⣤⣤⡠⠟⠃\n"); // ignore this V
-  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠷⠶⠦⠶⠞⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    You installed "
-            << (int)diff << " days ago" << '\n';
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠷⠶⠦⠶⠞⠉" << '\n';
 }

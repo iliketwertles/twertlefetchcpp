@@ -76,22 +76,13 @@ public:
     }
   }
 
-  const int DoB() const {
-    const time_t &today = std::time(0);
-    if (stat("/", &fileInfo) == 0) {
-      const time_t &birth_date = fileInfo.st_ctime;
-      return std::difftime(today, birth_date) / (60 * 60 * 24);
-    } else {
-      return 999;
-    }
-  }
 };
 
 int main(int argc, char *argv[]) {
   // printing everything out, idk a better way to do it
   if (argc >= 2 && strcmp(argv[1], "-f") == 0) {
     fumo(SystemInfo().distro(), SystemInfo().kernel(), SystemInfo().packages(),
-         SystemInfo().desktop(), SystemInfo().DoB());
+         SystemInfo().desktop());
     return 0;
   } else {
     std::cout << "     .--." << '\n';
@@ -104,8 +95,7 @@ int main(int argc, char *argv[]) {
     std::cout << "  (|     | )  Desktop: "
               << "\033[31m" << SystemInfo().desktop() << "\033[0m" << '\n';
     std::cout << R"( /'\_   _/`\ )" << '\n';
-    std::cout << R"( \___)=(___/  You installed )" << SystemInfo().DoB()
-              << " days ago" << '\n';
+    std::cout << R"( \___)=(___/ )" << '\n';
   }
   return 0;
 }
