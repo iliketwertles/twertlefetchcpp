@@ -1,4 +1,5 @@
 #include "extra.cpp"
+#include "inipp.h"
 #include <array>
 #include <cstdio>
 #include <cstring>
@@ -14,6 +15,7 @@
 #include <sys/stat.h>
 #include <sys/utsname.h>
 #include <vector>
+#include <unistd.h>
 
 struct stat fileInfo;
 
@@ -79,21 +81,36 @@ public:
 };
 
 int main(int argc, char *argv[]) {
+  // config file stuff!!
+  inipp::Ini<char> ini;
+  char * user = getlogin();
+  //len should be the total len of both strings + 32 but i dont wanna math
+  char config_file[75] = "/home/";
+  strcat(config_file, user);
+  strcat(config_file, "/.config/twertlefetch/config.ini");
+  std::ifstream is(config_file);
+  ini.parse(is);
+	std::string Distro_color, Kernel_color, Packages_color, Desktop_color;
+	inipp::get_value(ini.sections["colors"], "Distro", Distro_color);
+  inipp::get_value(ini.sections["colors"], "Kernel", Kernel_color);
+  inipp::get_value(ini.sections["colors"], "Packages", Packages_color);
+  inipp::get_value(ini.sections["colors"], "Desktop", Desktop_color);
+
   // printing everything out, idk a better way to do it
   if (argc >= 2 && strcmp(argv[1], "-f") == 0) {
     fumo(SystemInfo().distro(), SystemInfo().kernel(), SystemInfo().packages(),
-         SystemInfo().desktop());
+         SystemInfo().desktop(), Distro_color, Kernel_color, Packages_color, Desktop_color, ini);
     return 0;
   } else {
     std::cout << "     .--." << '\n';
     std::cout << "    |o_o |    Distro: "
-              << "\033[36m" << SystemInfo().distro() << "\033[0m" << '\n';
+              << "\033[" << color_to_num(Distro_color) << "m" << SystemInfo().distro() << "\033[0m" << '\n';
     std::cout << "    |:_/ |    Kernel: "
-              << "\033[33m" << SystemInfo().kernel() << "\033[0m" << '\n';
+              << "\033[" << color_to_num(Kernel_color) << "m" << SystemInfo().kernel() << "\033[0m" << '\n';
     std::cout << R"(   //   \ \   Packages: )"
-              << "\033[34m" << SystemInfo().packages() << "\033[0m" << '\n';
+              << "\033[" << color_to_num(Packages_color) << "m" << SystemInfo().packages() << "\033[0m" << '\n';
     std::cout << "  (|     | )  Desktop: "
-              << "\033[31m" << SystemInfo().desktop() << "\033[0m" << '\n';
+              << "\033[" << color_to_num(Desktop_color) << "m" << SystemInfo().desktop() << "\033[0m" << '\n';
     std::cout << R"( /'\_   _/`\ )" << '\n';
     std::cout << R"( \___)=(___/ )" << '\n';
   }

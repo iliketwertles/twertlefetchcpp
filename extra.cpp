@@ -10,8 +10,29 @@
 #include <string>
 #include <sys/utsname.h>
 #include <vector>
+#include "inipp.h"
 
 struct utsname unameData;
+
+int color_to_num(std::string & color) {
+  const std::map<std::string, std::int32_t> m_ColorMap {
+    { "red", 31 },
+    { "green", 32 },
+    { "yellow", 33 },
+    { "blue", 34 },
+    { "magenta", 35 },
+    { "cyan", 36 },
+    { "white", 0 },
+    { "black", 30 },
+  };
+
+  const auto item = m_ColorMap.find(color);
+  if (item  != m_ColorMap.end()) {
+    return item->second;                
+  } else {
+    return 0;
+  }
+}
 
 std::string trim(const std::string &line) {
   const char *WhiteSpace = " \t\v\r\n";
@@ -118,51 +139,40 @@ public:
 };
 
 void fumo(std::string distro, std::string kernel, int packages,
-          std::string desktop) {
+          std::string desktop, std::string Distro_color, std::string Kernel_color, std::string Packages_color,
+          std::string Desktop_color, inipp::Ini<char> ini) {
+  
+  std::string Arch_color, CPU_color, GPU_color, Init_color, Shell_color, Mem_color;
+  inipp::get_value(ini.sections["colors"], "Arch", Arch_color);
+  inipp::get_value(ini.sections["colors"], "CPU", CPU_color);
+  inipp::get_value(ini.sections["colors"], "GPU", GPU_color);
+  inipp::get_value(ini.sections["colors"], "Init", Init_color);
+  inipp::get_value(ini.sections["colors"], "Shell", Shell_color);
+  inipp::get_value(ini.sections["colors"], "Mem", Mem_color);
 
-  printf("⠀⢀⣒⠒⠆⠤⣀⡀⠀\n");
-  printf("⢠⡛⠛⠻⣷⣶⣦⣬⣕⡒⠤⢀⣀⠀\n");
-  printf("⡿⢿⣿⣿⣿⣿⣿⡿⠿⠿⣿⣳⠖⢋⣩⣭⣿⣶⡤⠶⠶⢶⣒⣲⢶⣉⣐⣒⣒⣒⢤⡀⠀\n");
-  printf("⣿⠀⠉⣩⣭⣽⣶⣾⣿⢿⡏⢁⣴⠿⠛⠉⠁⠀⠀⠀⠀⠀⠀⠉⠙⠲⢭⣯⣟⡿⣷⣘⠢⡀\n");
-  printf("⠹⣷⣿⣿⣿⣿⣿⢟⣵⠋⢠⡾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⣾⣦⣾⣢\n");
-  printf("⠀⠹⣿⣿⣿⡿⣳⣿⠃⠀⣼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣿⠟\n");
-  printf("⠀⠀⠹⣿⣿⣵⣿⠃⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣷⡄\n");
-  printf("⠀⠀⠀⠈⠛⣯⡇⠛⣽⣦⣿⠀⠀⠀⠀⢀⠔⠙⣄⠀⠀⠀⠀⠀⠀⣠⠳⡀⠀⠀⠀⠀⢿⡵⡀⠀⠀       Distro:\033[36m %s "
-         "\033[0m \n",
-         distro.c_str());
-  printf("⠀⠀⠀⠀⣸⣿⣿⣿⠿⢿⠟⠀⠀⠀⢀⡏⠀⠀⠘⡄⠀⠀⠀⠀⢠⠃⠀⠹⡄⠀⠀⠀⠸⣿⣷⡀⠀⠀      Kernel:\033[33m %s "
-         "\033[0m \n",
-         kernel.c_str());
-  printf("⠀⠀⠀⠸⣿⣿⠟⢹⣥⠀⠀⠀⠀⠀⣸⣀⣀⣤⣀⣀⠈⠳⢤⡀⡇⣀⣠⣄⣸⡆⠀⠀⠀⡏⠀⠀        Packages:\033[34m %i "
-         "\033[0m \n",
-         packages);
-  printf("⠀⠀⠀⠀⠁⠁⠀⢸⢟⡄⠀⠀⠀⠀⣿⣾⣿⣿⣿⣿⠁⠀⠈⠙⠙⣯⣿⣿⣿⡇⠀⠀⢠⠃          Desktop:\033[31m %s "
-         "\033[0m \n",
-         desktop.c_str());
-  printf(
-      "⠀⠀⠀⠀⠀⠀⠀⠇⢨⢞⢆⠀⠀⠀⡿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⣿⣿⣿⡿⡇⠀⣠⢟⡄          Arch:\033[36m %s \033[0m \n",
-      SystemInfoExt().arch());
-  printf(
-      "⠀⠀⠀⠀⠀⠀⡼⠀⢈⡏⢎⠳⣄⠀⡇⠙⠛⠟⠛⠀⠀⠀⠀⠀⠀⠘⠻⠛⢱⢃⡜⡝⠈⠚⡄         CPU:\033[33m %s \033[0m \n",
-      SystemInfoExt().cpu().c_str());
-  printf(
-      "⠀⠀⠀⠀⠀⠘⣅⠁⢸⣋⠈⢣⡈⢷⠇⠀⠀⠀⠀⠀⣄⠀⠀⢀⡄⠀⠀⣠⣼⢯⣴⠇⣀⡀⢸         GPU:\033[34m %s \033[0m \n",
-      SystemInfoExt().gpu().c_str());
-  printf(
-      "⠀⠀⠀⠀⠀⠀⠈⠳⡌⠛⣶⣆⣷⣿⣦⣄⣀⠀⠀⠀⠈⠉⠉⢉⣀⣤⡞⢛⣄⡀⢀⡨⢗⡦⠎         Init:\033[31m %s \033[0m \n",
-      SystemInfoExt().init());
-  printf("⠀⠀⠀⠀⠀⠀⠀⠀⠈⠑⠪⣿⠁⠀⠐⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠉⠁⢸⠀⠀⠀⠄⠙⡆         Shell:\033[36m %s "
-         "\033[0m \n",
-         getenv("SHELL"));
-  printf("⠀⠀⠀⠀⠀⠀⠀⠀⣀⠤⠚⡉⢳⡄⠡⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠁⣠⣧⣤⣄⣀⡀⡰⠁         Mem:\033[33m %i/%imb "
-         "\033[0m \n",
-         SystemInfoExt().mem()[1] / 1024, SystemInfoExt().mem()[0] / 1024);
-  printf("⠀⠀⠀⠀⠀⢀⠔⠉⠀⠀⠀⠀⢀⣧⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣅⡀\n");
-  printf("⠀⠀⠀⠀⠀⢸⠆⠀⠀⠀⣀⣼⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⣠⠖⠒⠒⠛⢿⣆\n");
-  printf("⠀⠀⠀⠀⠀⠀⠑⠤⠴⠞⢋⣵⣿⢿⣿⣿⣿⣿⣿⣿⠗⣀⠀⠀⠀⠀⠀⢰⠇⠀⠀⠀⠀⢀⡼⣶⣤\n");
-  printf("⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠟⢛⣿⠀⠙⠲⠽⠛⠛⠵⠞⠉⠙⠳⢦⣀⣀⡞⠀⠀⠀⠀⡠⠋⠐⠣⠮⡁\n");
-  printf("⠀⠀⠀⠀⠀⠀⠀⢠⣎⡀⢀⣾⠇⢀⣠⡶⢶⠞⠋⠉⠉⠒⢄⡀⠉⠈⠉⠀⠀⠀⣠⣾⠀⠀⠀⠀⠀⢸⡀\n");
-  printf("⠀⠀⠀⠀⠀⠀⠀⠘⣦⡀⠘⢁⡴⢟⣯⣞⢉⠀⠀⠀⠀⠀⠀⢹⠶⠤⠤⡤⢖⣿⡋⢇⠀⠀⠀⠀⠀⢸⠀\n");
-  printf("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠵⠗⠺⠟⠖⢈⡣⡄⠀⠀⠀⠀⢀⣼⡤⣬⣽⠾⠋⠉⠑⠺⠧⣀⣤⣤⡠⠟⠃\n"); // ignore this V
+  std::cout << "⠀⢀⣒⠒⠆⠤⣀⡀⠀" << '\n';
+  std::cout <<"⢠⡛⠛⠻⣷⣶⣦⣬⣕⡒⠤⢀⣀⠀" << '\n';
+  std::cout << "⡿⢿⣿⣿⣿⣿⣿⡿⠿⠿⣿⣳⠖⢋⣩⣭⣿⣶⡤⠶⠶⢶⣒⣲⢶⣉⣐⣒⣒⣒⢤⡀⠀" << '\n';
+  std::cout << "⣿⠀⠉⣩⣭⣽⣶⣾⣿⢿⡏⢁⣴⠿⠛⠉⠁⠀⠀⠀⠀⠀⠀⠉⠙⠲⢭⣯⣟⡿⣷⣘⠢⡀⠀" << '\n';
+  std::cout << "⠹⣷⣿⣿⣿⣿⣿⢟⣵⠋⢠⡾⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⣾⣦⣾⣢⡄" << '\n';
+  std::cout << "⠀⠹⣿⣿⣿⡿⣳⣿⠃⠀⣼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿⣿⠟⠁⠀" << '\n';
+  std::cout << "⠀⠀⠹⣿⣿⣵⣿⠃⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣷⡄⠀⠀⠀⠀" << '\n';
+  std::cout << "⠀⠀⠀⠈⠛⣯⡇⠛⣽⣦⣿⠀⠀⠀⠀⢀⠔⠙⣄⠀⠀⠀⠀⠀⠀⣠⠳⡀⠀⠀⠀⠀⢿⡵⡀⠀⠀       Distro:" << "\033[" << color_to_num(Distro_color) << "m " << distro.c_str() << "\033[0m\n";
+  std::cout << "⠀⠀⠀⠀⣸⣿⣿⣿⠿⢿⠟⠀⠀⠀⢀⡏⠀⠀⠘⡄⠀⠀⠀⠀⢠⠃⠀⠹⡄⠀⠀⠀⠸⣿⣷⡀⠀⠀      Kernel:" << "\033[" << color_to_num(Kernel_color) << "m " << kernel.c_str() << "\033[0m\n";
+  std::cout << "⠀⠀⠀⠸⣿⣿⠟⢹⣥⠀⠀⠀⠀⠀⣸⣀⣀⣤⣀⣀⠈⠳⢤⡀⡇⣀⣠⣄⣸⡆⠀⠀⠀⡏⠀⠀        Packages:" << "\033[" << color_to_num(Packages_color) << "m " << packages << "\033[0m\n" ;
+  std::cout << "⠀⠀⠀⠀⠁⠁⠀⢸⢟⡄⠀⠀⠀⠀⣿⣾⣿⣿⣿⣿⠁⠀⠈⠙⠙⣯⣿⣿⣿⡇⠀⠀⢠⠃          Desktop:" << "\033[" << color_to_num(Desktop_color) << "m " << desktop.c_str() << "\033[0m\n" ;
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠇⢨⢞⢆⠀⠀⠀⡿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⣿⣿⣿⡿⡇⠀⣠⢟⡄          Arch:" << "\033[" << color_to_num(Arch_color) << "m " << SystemInfoExt().arch() << "\033[0m\n" ;
+  std::cout << "⠀⠀⠀⠀⠀⠀⡼⠀⢈⡏⢎⠳⣄⠀⡇⠙⠛⠟⠛⠀⠀⠀⠀⠀⠀⠘⠻⠛⢱⢃⡜⡝⠈⠚⡄         CPU:" << "\033[" << color_to_num(GPU_color) << "m " << SystemInfoExt().cpu().c_str() << "\033[0m\n" ;
+  std::cout << "⠀⠀⠀⠀⠀⠘⣅⠁⢸⣋⠈⢣⡈⢷⠇⠀⠀⠀⠀⠀⣄⠀⠀⢀⡄⠀⠀⣠⣼⢯⣴⠇⣀⡀⢸         GPU:" << "\033[" << color_to_num(GPU_color) << "m " << SystemInfoExt().gpu().c_str() << "\033[0m\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠈⠳⡌⠛⣶⣆⣷⣿⣦⣄⣀⠀⠀⠀⠈⠉⠉⢉⣀⣤⡞⢛⣄⡀⢀⡨⢗⡦⠎         Init:" << "\033[" << color_to_num(Init_color) << "m " << SystemInfoExt().init() << "\033[0m\n" ;
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠈⠑⠪⣿⠁⠀⠐⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠉⠁⢸⠀⠀⠀⠄⠙⡆         Shell:" << "\033[" << color_to_num(Shell_color) << "m " << getenv("SHELL") << "\033[0m\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⣀⠤⠚⡉⢳⡄⠡⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠁⣠⣧⣤⣄⣀⡀⡰⠁         Mem:" << "\033[" << color_to_num(Mem_color) << "m " << SystemInfoExt().mem()[1] / 1024 << "/" << SystemInfoExt().mem()[0] / 1024 << "mb" << "\033[0m\n";
+  std::cout << "⠀⠀⠀⠀⠀⢀⠔⠉⠀⠀⠀⠀⢀⣧⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣅⡀\n";
+  std::cout << "⠀⠀⠀⠀⠀⢸⠆⠀⠀⠀⣀⣼⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⣠⠖⠒⠒⠛⢿⣆\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠑⠤⠴⠞⢋⣵⣿⢿⣿⣿⣿⣿⣿⣿⠗⣀⠀⠀⠀⠀⠀⢰⠇⠀⠀⠀⠀⢀⡼⣶⣤\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠀⡠⠟⢛⣿⠀⠙⠲⠽⠛⠛⠵⠞⠉⠙⠳⢦⣀⣀⡞⠀⠀⠀⠀⡠⠋⠐⠣⠮⡁\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⢠⣎⡀⢀⣾⠇⢀⣠⡶⢶⠞⠋⠉⠉⠒⢄⡀⠉⠈⠉⠀⠀⠀⣠⣾⠀⠀⠀⠀⠀⢸⡀\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠘⣦⡀⠘⢁⡴⢟⣯⣞⢉⠀⠀⠀⠀⠀⠀⢹⠶⠤⠤⡤⢖⣿⡋⢇⠀⠀⠀⠀⠀⢸⠀\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠵⠗⠺⠟⠖⢈⡣⡄⠀⠀⠀⠀⢀⣼⡤⣬⣽⠾⠋⠉⠑⠺⠧⣀⣤⣤⡠⠟⠃\n";
   std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠷⠶⠦⠶⠞⠉" << '\n';
 }
