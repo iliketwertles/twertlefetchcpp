@@ -9,10 +9,13 @@
 #include <stdio.h>
 #include <string>
 #include <sys/utsname.h>
+#include <thread>
 #include <vector>
 #include "inipp.h"
 
 struct utsname unameData;
+
+int threads = std::thread::hardware_concurrency();
 
 int color_to_num(std::string & color) {
   const std::map<std::string, std::int32_t> m_ColorMap {
@@ -131,8 +134,9 @@ public:
         }
       }
     }
-    ret.push_back(std::stoi(total));
-    ret.push_back(std::stoi(total) - std::stoi(available));
+    ret.push_back(std::stoi(total) / 1000000);
+    double used = std::stoi(total) - std::stoi(available);
+    ret.push_back(used / 1000000);
     meminfo.close();
     return ret;
   }
@@ -162,11 +166,11 @@ void fumo(std::string distro, std::string kernel, int packages,
   std::cout << "⠀⠀⠀⠸⣿⣿⠟⢹⣥⠀⠀⠀⠀⠀⣸⣀⣀⣤⣀⣀⠈⠳⢤⡀⡇⣀⣠⣄⣸⡆⠀⠀⠀⡏⠀⠀        Packages:" << "\033[" << color_to_num(Packages_color) << "m " << packages << "\033[0m\n" ;
   std::cout << "⠀⠀⠀⠀⠁⠁⠀⢸⢟⡄⠀⠀⠀⠀⣿⣾⣿⣿⣿⣿⠁⠀⠈⠙⠙⣯⣿⣿⣿⡇⠀⠀⢠⠃          Desktop:" << "\033[" << color_to_num(Desktop_color) << "m " << desktop.c_str() << "\033[0m\n" ;
   std::cout << "⠀⠀⠀⠀⠀⠀⠀⠇⢨⢞⢆⠀⠀⠀⡿⣿⣿⣿⣿⡏⠀⠀⠀⠀⠀⣿⣿⣿⡿⡇⠀⣠⢟⡄          Arch:" << "\033[" << color_to_num(Arch_color) << "m " << SystemInfoExt().arch() << "\033[0m\n" ;
-  std::cout << "⠀⠀⠀⠀⠀⠀⡼⠀⢈⡏⢎⠳⣄⠀⡇⠙⠛⠟⠛⠀⠀⠀⠀⠀⠀⠘⠻⠛⢱⢃⡜⡝⠈⠚⡄         CPU:" << "\033[" << color_to_num(GPU_color) << "m " << SystemInfoExt().cpu().c_str() << "\033[0m\n" ;
+  std::cout << "⠀⠀⠀⠀⠀⠀⡼⠀⢈⡏⢎⠳⣄⠀⡇⠙⠛⠟⠛⠀⠀⠀⠀⠀⠀⠘⠻⠛⢱⢃⡜⡝⠈⠚⡄         CPU:" << "\033[" << color_to_num(CPU_color) << "m " << SystemInfoExt().cpu().c_str()  << " (" << threads << ")" << "\033[0m\n" ;
   std::cout << "⠀⠀⠀⠀⠀⠘⣅⠁⢸⣋⠈⢣⡈⢷⠇⠀⠀⠀⠀⠀⣄⠀⠀⢀⡄⠀⠀⣠⣼⢯⣴⠇⣀⡀⢸         GPU:" << "\033[" << color_to_num(GPU_color) << "m " << SystemInfoExt().gpu().c_str() << "\033[0m\n";
   std::cout << "⠀⠀⠀⠀⠀⠀⠈⠳⡌⠛⣶⣆⣷⣿⣦⣄⣀⠀⠀⠀⠈⠉⠉⢉⣀⣤⡞⢛⣄⡀⢀⡨⢗⡦⠎         Init:" << "\033[" << color_to_num(Init_color) << "m " << SystemInfoExt().init() << "\033[0m\n" ;
   std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⠈⠑⠪⣿⠁⠀⠐⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠉⠁⢸⠀⠀⠀⠄⠙⡆         Shell:" << "\033[" << color_to_num(Shell_color) << "m " << getenv("SHELL") << "\033[0m\n";
-  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⣀⠤⠚⡉⢳⡄⠡⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠁⣠⣧⣤⣄⣀⡀⡰⠁         Mem:" << "\033[" << color_to_num(Mem_color) << "m " << SystemInfoExt().mem()[1] / 1024 << "/" << SystemInfoExt().mem()[0] / 1024 << "mb" << "\033[0m\n";
+  std::cout << "⠀⠀⠀⠀⠀⠀⠀⠀⣀⠤⠚⡉⢳⡄⠡⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠁⣠⣧⣤⣄⣀⡀⡰⠁         Mem:" << "\033[" << color_to_num(Mem_color) << "m " << SystemInfoExt().mem()[1] << "/" << SystemInfoExt().mem()[0] << " GB" << "\033[0m\n";
   std::cout << "⠀⠀⠀⠀⠀⢀⠔⠉⠀⠀⠀⠀⢀⣧⣠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣅⡀\n";
   std::cout << "⠀⠀⠀⠀⠀⢸⠆⠀⠀⠀⣀⣼⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠟⠋⠁⣠⠖⠒⠒⠛⢿⣆\n";
   std::cout << "⠀⠀⠀⠀⠀⠀⠑⠤⠴⠞⢋⣵⣿⢿⣿⣿⣿⣿⣿⣿⠗⣀⠀⠀⠀⠀⠀⢰⠇⠀⠀⠀⠀⢀⡼⣶⣤\n";
