@@ -10,7 +10,7 @@
 #include <sys/utsname.h>
 #include <thread>
 #include <vector>
-#include "inipp.h"
+#include "inipp.hpp"
 
 struct utsname unameData;
 

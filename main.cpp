@@ -1,5 +1,5 @@
 #include "extra.cpp"
-#include "inipp.h"
+#include "inipp.hpp"
 #include <cstdio>
 #include <cstring>
 #include <ctime>
