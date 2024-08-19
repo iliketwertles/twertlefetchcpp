@@ -69,8 +69,8 @@ public:
     // getting cpu info
     std::string cpuinfo_s, cpu, line, init_name;
     std::ifstream cpuinfo("/proc/cpuinfo");
+    std::string model = "model name";
     if (cpuinfo.is_open()) {
-      std::string model = "model name";
       while (std::getline(cpuinfo, line)) {
         size_t found = line.find(model);
         if (found != std::string::npos) {
@@ -78,8 +78,6 @@ public:
 
           cpu.erase(0, cpu.find_first_not_of(" \t"));
           cpu.erase(cpu.find_last_not_of(" \t") + 1);
-          line = "";
-
           break;
         }
       }
