@@ -75,5 +75,6 @@
         "forward_list": "cpp",
         "unordered_set": "cpp",
         "typeindex": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

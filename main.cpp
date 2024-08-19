@@ -64,10 +64,12 @@ public:
   }
 
   const char *desktop() const {
-    if (getenv("XDG_CURRENT_DESKTOP") != NULL) {
-      return getenv("XDG_CURRENT_DESKTOP");
-    } else if (getenv("DESKTOP_SESSION") != NULL) {
-      return getenv("DESKTOP_SESSION");
+    char *_current_desktop = getenv("XDG_CURRENT_DESKTOP");
+    char *_desktop_session = getenv("DESKTOP_SESSION");
+    if (_current_desktop != NULL) {
+      return _current_desktop;
+    } else if (_desktop_session != NULL) {
+      return _desktop_session;
     } else {
       return "i dunno :(";
     }
